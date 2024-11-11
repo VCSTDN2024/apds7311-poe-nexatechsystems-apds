@@ -1,0 +1,26 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm test  
+      - run:
+          name: Run SonarCloud scan
+          command: |
+            npm install -g sonar-scanner
+            sonar-scanner \
+              -Dsonar.projectKey="vcstdn2024_apds7311-poe-nexatechsystems-apds" \
+              -Dsonar.organization="vcstdn2024" \
+              -Dsonar.sources=. \
+              -Dsonar.host.url="https://sonarcloud.io" \
+              -Dsonar.login=$SONAR_TOKEN
+
+workflows:
+  version: 2
+  build-and-scan:
+    jobs:
+      - build
